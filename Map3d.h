@@ -47,6 +47,7 @@ public:
   bool add_las_file(std::string ifile, std::vector<int> lasomits, int skip = 0);
 
   void stitch_lifted_features();
+  bool add_terrain_to_buildings();
   bool construct_rtree();
   bool threeDfy(bool triangulate = true);
   // void add_elevation_point(double x, double y, double z, int returnno, liblas::Classification lasclass);
@@ -82,8 +83,7 @@ private:
   std::string _road_heightref;
   float       _radius_vertex_elevation;
   float       _threshold_jump_edges;
-  double      _minx;
-  double      _miny;
+  Box2        _bbox;
 
   std::vector<TopoFeature*>   _lsFeatures;
   std::vector<std::string>    _allowed_layers;

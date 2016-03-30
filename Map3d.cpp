@@ -34,8 +34,10 @@ Map3d::Map3d() {
   _forest_simplification = 0;
   _radius_vertex_elevation = 1.0;
   _threshold_jump_edges = 0.5;
-  _minx = 1e8;
-  _miny = 1e8;
+  _bbox.min_corner().set<0>(1e8);
+  _bbox.min_corner().set<1>(1e8);
+  _bbox.max_corner().set<0>(-1e8);
+  _bbox.max_corner().set<1>(-1e8);
 }
 
 
@@ -208,8 +210,6 @@ bool Map3d::threeDfy(bool triangulate) {
   2. stitch
   3. CDT
 */
-  // std::clog << "MinX: " << _minx << std::endl;
-  // std::clog << "MinY: " << _miny << std::endl;
   std::clog << "===== /LIFTING =====" << std::endl;
   for (auto& p : _lsFeatures) {
     if (p->get_top_level() == true) {
@@ -264,6 +264,25 @@ bool Map3d::add_polygons_file(std::string ifile, std::string idfield, std::vecto
     return false;
   }
   bool wentgood = this->extract_and_add_polygon(dataSource, idfield, layers);
+
+  //-- find minx/miny of all datasets
+  OGREnvelope bbox;
+  for (auto l : layers) {
+    OGRLayer *dataLayer = dataSource->GetLayerByName((l.first).c_str());
+    if (dataLayer == NULL) {
+      continue;
+    }
+    dataLayer->GetExtent(&bbox);
+    if (bbox.MinX < bg::get<bg::min_corner, 0>(_bbox))
+      bg::set<bg::min_corner, 0>(_bbox, bbox.MinX);
+    if (bbox.MinY < bg::get<bg::min_corner, 1>(_bbox))
+      bg::set<bg::min_corner, 1>(_bbox, bbox.MinY);
+    if (bbox.MaxX > bg::get<bg::max_corner, 0>(_bbox))
+      bg::set<bg::max_corner, 0>(_bbox, bbox.MaxX);
+    if (bbox.MaxY > bg::get<bg::max_corner, 1>(_bbox))
+      bg::set<bg::max_corner, 1>(_bbox, bbox.MaxY);
+  }
+
   #if GDAL_VERSION_MAJOR < 2
     OGRDataSource::DestroyDataSource(dataSource);
   #else
@@ -274,8 +293,6 @@ bool Map3d::add_polygons_file(std::string ifile, std::string idfield, std::vecto
 
 
 bool Map3d::add_polygons_file(std::string ifile, std::string idfield, std::string lifting) {
-  std::clog << "Reading input dataset: " << ifile << std::endl;
-
 #if GDAL_VERSION_MAJOR < 2
   if (OGRSFDriverRegistrar::GetRegistrar()->GetDriverCount() == 0) 
     OGRRegisterAll(); 
@@ -285,7 +302,6 @@ bool Map3d::add_polygons_file(std::string ifile, std::string idfield, std::strin
     GDALAllRegister();
   GDALDataset *dataSource = (GDALDataset*) GDALOpenEx(ifile.c_str(), GDAL_OF_READONLY, NULL, NULL, NULL);
 #endif
-
   if (dataSource == NULL) {
     std::cerr << "\tERROR: could not open file, skipping it." << std::endl;
     return false;
@@ -297,27 +313,13 @@ bool Map3d::add_polygons_file(std::string ifile, std::string idfield, std::strin
     std::pair<std::string, std::string> p(dataLayer->GetName(), lifting);
     layers.push_back(p);
   }
-  bool wentgood = this->extract_and_add_polygon(dataSource, idfield, layers);
-  //-- find minx/miny of all datasets
-  // TODO : also find minx/miny for the method above with GML
-  OGREnvelope bbox;
-  for (auto l : layers) {
-    OGRLayer *dataLayer = dataSource->GetLayerByName((l.first).c_str());
-    if (dataLayer == NULL) {
-      continue;
-    }
-    dataLayer->GetExtent(&bbox);
-    if (bbox.MinX < _minx)
-      _minx = bbox.MinX;
-    if (bbox.MinY < _miny)
-      _miny = bbox.MinY;
-  }
 #if GDAL_VERSION_MAJOR < 2
   OGRDataSource::DestroyDataSource(dataSource);
 #else
   GDALClose(dataSource);
 #endif
-  return wentgood;
+
+  return add_polygons_file(ifile, idfield, layers);
 }
 
 
@@ -633,3 +635,24 @@ void Map3d::stitch_2_hard(TopoFeature* hard, int hardpos, TopoFeature* soft, int
 }
 
 
+bool Map3d::add_terrain_to_buildings() {
+  std::stringstream ss;
+  ss << "POLYGON((";
+  ss << (bg::get<bg::min_corner, 0>(_bbox) - 100) << " ";
+  ss << (bg::get<bg::min_corner, 1>(_bbox) - 100) << ", ";
+  ss << (bg::get<bg::min_corner, 0>(_bbox) - 100) << " ";
+  ss << (bg::get<bg::max_corner, 1>(_bbox) + 100) << ", ";
+  ss << (bg::get<bg::max_corner, 0>(_bbox) + 100) << " ";
+  ss << (bg::get<bg::max_corner, 1>(_bbox) + 100) << ", ";
+  ss << (bg::get<bg::max_corner, 0>(_bbox) + 100) << " ";
+  ss << (bg::get<bg::min_corner, 1>(_bbox) - 100) << ", ";
+  ss << (bg::get<bg::min_corner, 0>(_bbox) - 100) << " ";
+  ss << (bg::get<bg::min_corner, 1>(_bbox) - 100) << "))";
+  Polygon2 se;
+  bg::read_wkt(ss.str(), se);  
+
+  std::clog << bg::area(se) << std::endl;
+
+  
+  return true;
+}

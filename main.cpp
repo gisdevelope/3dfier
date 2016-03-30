@@ -124,6 +124,9 @@ int main(int argc, const char * argv[]) {
   }
 
   std::clog << "\nTotal # of polygons: " << map3d.get_num_polygons() << std::endl;
+
+  std::clog << "Adding terrain to buildings..." << std::endl;
+  map3d.add_terrain_to_buildings();
   
   //-- spatially index the polygons
   map3d.construct_rtree();
