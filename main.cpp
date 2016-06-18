@@ -158,10 +158,15 @@ int main(int argc, const char * argv[]) {
   }
 
   n = nodes["options"];
+  bool bStitching = true;
   if (n["radius_vertex_elevation"])
     map3d.set_radius_vertex_elevation(n["radius_vertex_elevation"].as<float>());
   if (n["threshold_jump_edges"])
     map3d.set_threshold_jump_edges(n["threshold_jump_edges"].as<float>());
+  if (n["stitching"]) {
+    if (n["stitching"].as<std::string>() == "false")
+      bStitching = false;
+  }
 
   n = nodes["output"];
   std::clog << "Lifting all input polygons to 3D..." << std::endl;
@@ -173,7 +178,7 @@ int main(int argc, const char * argv[]) {
     map3d.construct_CDT();
   }
   else {
-    map3d.threeDfy();
+    map3d.threeDfy(bStitching);
     map3d.construct_CDT();
   }
   std::clog << "done." << std::endl;
