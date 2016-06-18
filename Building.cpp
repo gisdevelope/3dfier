@@ -197,6 +197,13 @@ std::string Building::get_citygml() {
   for (i = 0; i < (r.size() - 1); i++) 
     ss << get_extruded_line_gml(&r[i], &r[i + 1], h, hbase, false);
   ss << get_extruded_line_gml(&r[i], &r[0], h, hbase, false);
+  //-- irings
+  auto irings = bg::interior_rings(*(this->_p2));
+  for (Ring2& r : irings) {
+    for (i = 0; i < (r.size() - 1); i++) 
+      ss << get_extruded_line_gml(&r[i], &r[i + 1], h, hbase, false);
+    ss << get_extruded_line_gml(&r[i], &r[0], h, hbase, false);
+  }
   ss << "</gml:CompositeSurface>";
   ss << "</gml:exterior>";
   ss << "</gml:Solid>";

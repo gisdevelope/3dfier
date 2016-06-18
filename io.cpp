@@ -62,19 +62,30 @@ std::string get_citygml_namespaces() {
 std::string get_polygon_lifted_gml(Polygon2* p2, double height, bool reverse) {
   std::stringstream ss;
   ss << std::setprecision(3) << std::fixed;
-  ss << "<gml:surfaceMember>";
-  ss << "<gml:Polygon>";
-  ss << "<gml:exterior>";
-  ss << "<gml:LinearRing>";
   if (reverse)
     bg::reverse(*p2);
-  // TODO : also do the interior rings for extrusion
+  ss << "<gml:surfaceMember>";
+  ss << "<gml:Polygon>";
+  //-- oring  
   auto r = bg::exterior_ring(*p2);
+  ss << "<gml:exterior>";
+  ss << "<gml:LinearRing>";
   for (int i = 0; i < r.size(); i++)
     ss << "<gml:pos>" << bg::get<0>(r[i]) << " " << bg::get<1>(r[i]) << " " << height << "</gml:pos>";
   ss << "<gml:pos>" << bg::get<0>(r[0]) << " " << bg::get<1>(r[0]) << " " << height << "</gml:pos>";
   ss << "</gml:LinearRing>";
   ss << "</gml:exterior>";
+  //-- irings
+  auto irings = bg::interior_rings(*p2);
+  for (Ring2& r : irings) {
+    ss << "<gml:interior>";
+    ss << "<gml:LinearRing>";
+    for (int i = 0; i < r.size(); i++) 
+      ss << "<gml:pos>" << bg::get<0>(r[i]) << " " << bg::get<1>(r[i]) << " " << height << "</gml:pos>";
+    ss << "<gml:pos>" << bg::get<0>(r[0]) << " " << bg::get<1>(r[0]) << " " << height << "</gml:pos>";
+    ss << "</gml:LinearRing>";
+    ss << "</gml:interior>";
+  }
   ss << "</gml:Polygon>";
   ss << "</gml:surfaceMember>";
   if (reverse)
