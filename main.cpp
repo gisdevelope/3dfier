@@ -165,12 +165,17 @@ int main(int argc, const char * argv[]) {
 
   n = nodes["output"];
   std::clog << "Lifting all input polygons to 3D..." << std::endl;
-  if (n["format"].as<std::string>() == "CSV-BUILDINGS")
+  if (n["format"].as<std::string>() == "CSV-BUILDINGS") {
     map3d.threeDfy(false);
-  if (n["format"].as<std::string>() == "OBJ-BUILDINGS")
-    map3d.threeDfy_building_volume();
-  else
+  }
+  if (n["format"].as<std::string>() == "OBJ-BUILDINGS") {
+    map3d.threeDfy(false);
+    map3d.construct_CDT();
+  }
+  else {
     map3d.threeDfy();
+    map3d.construct_CDT();
+  }
   std::clog << "done." << std::endl;
   
   

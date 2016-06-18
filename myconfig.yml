@@ -3,11 +3,13 @@ input_polygons:
   - datasets: 
       - /Users/elvis/data/campus/partof.shp
     uniqueid: FACE_ID
+    height_field: hoogtenive
     lifting: Building
   - datasets: 
       - /Users/elvis/data/campus/another.gml
       - /Users/elvis/data/campus/another2.gml
     uniqueid: fid
+    height_field: hoogtenive
     lifting_per_layer:
       Gebouw: Building
       Terrein: Terrain
@@ -29,8 +31,7 @@ lifting_options:
 
 input_elevation:
   - datasets:
-      # - /Users/elvis/data/top10nl/schie/ahn2_u.laz
-      # - /Users/elvis/data/top10nl/schie/ahn2_g.laz
+      - /Users/elvis/data/top10nl/schie/ahn2_g.laz
       - /Users/elvis/data/top10nl/schie/ahn3.laz
     omit_LAS_classes:
       - 1 # unclassified
@@ -40,10 +41,10 @@ input_elevation:
 options:
   radius_vertex_elevation: 1.0
   threshold_jump_edges: 0.25
+  stitching: true
 
 output: 
   format: OBJ # OBJ-NoID or CityGML or CSV-BUILDINGS
-  building_floor: false
   vertical_exaggeration: 3
 
 buildings:

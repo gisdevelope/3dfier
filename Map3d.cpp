@@ -246,7 +246,7 @@ void Map3d::add_elevation_point(liblas::Point const& laspt) {
 }
 
 
-bool Map3d::threeDfy(bool triangulate) {
+bool Map3d::threeDfy(bool stitching) {
   /*
     1. lift
     2. stitch
@@ -263,14 +263,11 @@ bool Map3d::threeDfy(bool triangulate) {
       std::clog << "niveau-1 " << p->get_id() << std::endl;
   }
   std::clog << "===== LIFTING/ =====" << std::endl;
-  if (triangulate == true) {
 
+  if (stitching == true) {
     std::clog << "=====  /STITCHING =====" << std::endl;
     this->stitch_lifted_features();
     std::clog << "=====  STITCHING/ =====" << std::endl;
-
-    // std::clog << "SIZE FEATURES: " << _lsFeatures.size() << std::endl;
-    // std::clog << "SIZE NC: " << _nc.size() << std::endl;
 
     //-- Sort all node column vectors
     for (auto& nc : _nc) {
@@ -278,6 +275,7 @@ bool Map3d::threeDfy(bool triangulate) {
     }
 
     //   std::clog << "=====  /BOWTIES =====" << std::endl;
+    //  TODO: that should be fixed!
     //   for (auto& p : _lsFeatures) {
     //     if (p->has_vertical_walls() == true) {
     //       std::vector<TopoFeature*> lsAdj = get_adjacent_features(p);
@@ -296,29 +294,11 @@ bool Map3d::threeDfy(bool triangulate) {
       }
     }
     std::clog << "=====  VERTICAL WALLS/ =====" << std::endl;
-
-    std::clog << "=====  /CDT =====" << std::endl;
-    for (auto& p : _lsFeatures) {
-      // std::clog << p->get_id() << " (" << p->get_class() << ")" << std::endl;
-      p->buildCDT();
-    }
-    std::clog << "=====  CDT/ =====" << std::endl;
   }
   return true;
 }
 
-bool Map3d::threeDfy_building_volume() {
-  /*
-    1. lift
-    2. CDT
-  */
-  std::clog << "===== /LIFTING =====" << std::endl;
-  for (auto& p : _lsFeatures) {
-    std::clog << p->get_id() << std::endl;
-    p->lift();
-  }
-  std::clog << "===== LIFTING/ =====" << std::endl;
-
+bool Map3d::construct_CDT() {
   std::clog << "=====  /CDT =====" << std::endl;
   for (auto& p : _lsFeatures) {
     // std::clog << p->get_id() << " (" << p->get_class() << ")" << std::endl;
@@ -327,7 +307,6 @@ bool Map3d::threeDfy_building_volume() {
   std::clog << "=====  CDT/ =====" << std::endl;
   return true;
 }
-
 
 
 bool Map3d::construct_rtree() {
