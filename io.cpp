@@ -61,6 +61,7 @@ std::string get_citygml_namespaces() {
 
 std::string get_polygon_lifted_gml(Polygon2* p2, double height, bool reverse) {
   std::stringstream ss;
+  ss << std::setprecision(3) << std::fixed;
   ss << "<gml:surfaceMember>";
   ss << "<gml:Polygon>";
   ss << "<gml:exterior>";
@@ -71,7 +72,7 @@ std::string get_polygon_lifted_gml(Polygon2* p2, double height, bool reverse) {
   auto r = bg::exterior_ring(*p2);
   for (int i = 0; i < r.size(); i++)
     ss << "<gml:pos>" << bg::get<0>(r[i]) << " " << bg::get<1>(r[i]) << " " << height << "</gml:pos>";
-  ss << "<gml:pos>" << bg::get<0>(r[r.size() - 1]) << " " << bg::get<1>(r[r.size() - 1]) << " " << height << "</gml:pos>";
+  ss << "<gml:pos>" << bg::get<0>(r[0]) << " " << bg::get<1>(r[0]) << " " << height << "</gml:pos>";
   ss << "</gml:LinearRing>";
   ss << "</gml:exterior>";
   ss << "</gml:Polygon>";
@@ -83,6 +84,7 @@ std::string get_polygon_lifted_gml(Polygon2* p2, double height, bool reverse) {
 
 std::string get_extruded_line_gml(Point2* a, Point2* b, double high, double low, bool reverse) {
   std::stringstream ss;
+  ss << std::setprecision(3) << std::fixed;
   ss << "<gml:surfaceMember>";
   ss << "<gml:Polygon>";
   ss << "<gml:exterior>";

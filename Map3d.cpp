@@ -86,13 +86,13 @@ void Map3d::set_road_heightref(std::string h) {
 
 std::string Map3d::get_citygml() {
   std::stringstream ss;
-  ss << get_xml_header();
-  ss << get_citygml_namespaces();
-  ss << "<gml:name>my3dmap</gml:name>";
+  ss << get_xml_header() << std::endl;
+  ss << get_citygml_namespaces() << std::endl;
+  ss << "<gml:name>my 3dfied map</gml:name>" << std::endl;
   for (auto& p3 : _lsFeatures) {
-    ss << p3->get_citygml();
+    ss << p3->get_citygml() << std::endl;
   }
-  ss << "</CityModel>";
+  ss << "</CityModel>" << std::endl;
   return ss.str();
 }
 
