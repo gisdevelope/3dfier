@@ -185,8 +185,9 @@ int main(int argc, const char * argv[]) {
   
   
   //-- output
-  if (n["building_floor"].as<std::string>() == "true") 
-    map3d.set_building_include_floor(true);
+  if (n["building_floor"]) {
+    if (n["building_floor"].as<std::string>() == "true") 
+      map3d.set_building_include_floor(true);
   int z_exaggeration = 0;
   if (n["vertical_exaggeration"]) 
     z_exaggeration = n["vertical_exaggeration"].as<int>();
