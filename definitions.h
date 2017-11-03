@@ -56,6 +56,7 @@ typedef struct PointFile {
   std::string filename;
   std::vector<int> lasomits;
   int thinning = 1;
+  bool filter_userdata;
 } PointFile;
 
 typedef std::unordered_map< std::string, std::pair<OGRFieldType, std::string> > AttributeMap;

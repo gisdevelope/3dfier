@@ -291,6 +291,11 @@ int main(int argc, const char * argv[]) {
           thinning = 1;
         }
       }
+      //-- set filtering attribute
+      bool filter_userdata = false;
+      if ((*it)["filter_attribute"].as<std::string>() == "true") {
+        filter_userdata = true;
+      }
 
       //-- iterate over all files in directory
       boost::filesystem::path path(it2->as<std::string>());
@@ -309,6 +314,7 @@ int main(int argc, const char * argv[]) {
               pointFile.filename = it->path().string();
               pointFile.lasomits = lasomits;
               pointFile.thinning = thinning;
+              pointFile.filter_userdata = filter_userdata;
               fileList.push_back(pointFile);
             }
           }
@@ -319,6 +325,7 @@ int main(int argc, const char * argv[]) {
         pointFile.filename = path.string();
         pointFile.lasomits = lasomits;
         pointFile.thinning = thinning;
+        pointFile.filter_userdata = filter_userdata;
         fileList.push_back(pointFile);
       }
     }
@@ -649,6 +656,13 @@ bool validate_yaml(const char* arg, std::set<std::string>& allowedFeatures) {
       if (is_string_integer((*it)["thinning"].as<std::string>()) == false) {
         wentgood = false;
         std::cerr << "\tOption 'input_elevation.thinning' invalid; must be an integer.\n";
+      }
+    }
+    //-- check filtering attribute
+    if ((*it)["filter_attribute"]) {
+      if ((*it)["filter_attribute"].IsNull()) {
+        std::cerr << "Option 'filter_attribute' invalid; supplied empty attribute. \n";
+        wentgood = false;
       }
     }
   }

@@ -90,7 +90,7 @@ bool Building::lift() {
 }
 
 
-bool Building::add_elevation_point(Point2 &p, double z, float radius, LAS14Class lasclass, bool lastreturn) {
+bool Building::add_elevation_point(Point2 &p, double z, float radius, LAS14Class lasclass, bool lastreturn, bool addextra) {
   if (lastreturn) {
     if (within_range(p, *(_p2), radius)) {
       int zcm = int(z * 100);

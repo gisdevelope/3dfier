@@ -555,7 +555,7 @@ const std::vector<TopoFeature*>& Map3d::get_polygons3d() {
   return _lsFeatures;
 }
 
-void Map3d::add_elevation_point(liblas::Point const& laspt) {
+void Map3d::add_elevation_point(liblas::Point const& laspt, bool filter_userdata) {
   Point2 p(laspt.GetX(), laspt.GetY());
   LAS14Class lasclass = LAS_UNKNOWN;
   //-- get LAS class
@@ -587,11 +587,15 @@ void Map3d::add_elevation_point(liblas::Point const& laspt) {
     else {
       radius = _radius_vertex_elevation;
     }
+    bool addextra = false;
+    if (filter_userdata && laspt.GetUserData() == 1) {
+      addextra = true;
+    }
     f->add_elevation_point(p,
       laspt.GetZ(),
       radius,
       lasclass,
-      (laspt.GetReturnNumber() == laspt.GetNumberOfReturns()));
+      (laspt.GetReturnNumber() == laspt.GetNumberOfReturns()), addextra);
   }
 }
 
@@ -898,7 +902,8 @@ bool Map3d::add_las_file(PointFile pointFile) {
     }
     printProgressBar(0);
     int i = 0;
-    
+    int zeros = 0;
+    int ones = 0;
     try {
       while (reader.ReadNextPoint()) {
         liblas::Point const& p = reader.GetPoint();
@@ -908,7 +913,7 @@ bool Map3d::add_las_file(PointFile pointFile) {
           if (std::find(liblasomits.begin(), liblasomits.end(), p.GetClassification()) == liblasomits.end()) {
             //-- set the bounds filter
             if (polygonBounds.contains(p)) {
-              this->add_elevation_point(p);
+              this->add_elevation_point(p, pointFile.filter_userdata);
             }
           }
         }

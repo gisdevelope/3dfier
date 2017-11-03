@@ -912,7 +912,7 @@ int Flat::get_number_vertices() {
   return (int(_vertices.size()) + int(_vertices_vw.size()));
 }
 
-bool Flat::add_elevation_point(Point2 &p, double z, float radius, LAS14Class lasclass, bool lastreturn) {
+bool Flat::add_elevation_point(Point2 &p, double z, float radius, LAS14Class lasclass, bool lastreturn, bool addextra) {
   if (within_range(p, *(_p2), radius)) {
     int zcm = int(z * 100);
     //-- 1. assign to polygon since within the threshold value (buffering of polygon)
@@ -947,7 +947,7 @@ int Boundary3D::get_number_vertices() {
   return (int(_vertices.size()) + int(_vertices_vw.size()));
 }
 
-bool Boundary3D::add_elevation_point(Point2 &p, double z, float radius, LAS14Class lasclass, bool lastreturn) {
+bool Boundary3D::add_elevation_point(Point2 &p, double z, float radius, LAS14Class lasclass, bool lastreturn, bool addextra) {
   // no need for checking for point-in-polygon since only points in range of the vertices are added
   assign_elevation_to_vertex(p, z, radius);
   return true;
@@ -1010,18 +1010,22 @@ int TIN::get_number_vertices() {
   return (int(_vertices.size()) + int(_vertices_vw.size()));
 }
 
-bool TIN::add_elevation_point(Point2 &p, double z, float radius, LAS14Class lasclass, bool lastreturn) {
+bool TIN::add_elevation_point(Point2 &p, double z, float radius, LAS14Class lasclass, bool lastreturn, bool addextra) {
   bool toadd = false;
   // no need for checking for point-in-polygon since only points in range of the vertices are added
   assign_elevation_to_vertex(p, z, radius);
-  if (_simplification <= 1)
+  
+  //-- Add point internal since mask is used from las file UserData
+  if (addextra || _simplification <= 1) {
     toadd = true;
+  }
   else {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<int> dis(1, _simplification);
-    if (dis(gen) == 1)
+    if (dis(gen) == 1) {
       toadd = true;
+    }
   }
   // Add the point to the lidar points if it is within the polygon and respecting the inner buffer size
   if (toadd && point_in_polygon(p, *(_p2)) && (_innerbuffer == 0.0 || (within_range(p, *(_p2), _innerbuffer) && this->get_distance_to_boundaries(p) > _innerbuffer))) {

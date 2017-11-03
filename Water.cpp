@@ -48,7 +48,7 @@ bool Water::is_hard() {
   return true;
 }
 
-bool Water::add_elevation_point(Point2 &p, double z, float radius, LAS14Class lasclass, bool lastreturn) {
+bool Water::add_elevation_point(Point2 &p, double z, float radius, LAS14Class lasclass, bool lastreturn, bool addextra) {
   // Add elevation points with radius 0.0 to be inside the water polygon
   if (lasclass != LAS_BUILDING && lasclass != LAS_BRIDGE && point_in_polygon(p, *(_p2))) {
     int zcm = int(z * 100);
