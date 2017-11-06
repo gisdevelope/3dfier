@@ -271,7 +271,6 @@ int main(int argc, const char * argv[]) {
     << bg::get<bg::max_corner, 0>(b) << ", "
     << bg::get<bg::max_corner, 1>(b) << ")\n";
   
-  int threadPoolSize = 4;
   std::vector<PointFile> fileList;
 
   //-- add elevation datasets
@@ -293,8 +292,10 @@ int main(int argc, const char * argv[]) {
       }
       //-- set filtering attribute
       bool filter_userdata = false;
-      if ((*it)["filter_attribute"].as<std::string>() == "true") {
-        filter_userdata = true;
+      if ((*it)["filter_attribute"]) {
+        if ((*it)["filter_attribute"].as<std::string>() == "true") {
+          filter_userdata = true;
+        }
       }
 
       //-- iterate over all files in directory
@@ -660,8 +661,9 @@ bool validate_yaml(const char* arg, std::set<std::string>& allowedFeatures) {
     }
     //-- check filtering attribute
     if ((*it)["filter_attribute"]) {
-      if ((*it)["filter_attribute"].IsNull()) {
-        std::cerr << "Option 'filter_attribute' invalid; supplied empty attribute. \n";
+      std::string s = (*it)["filter_attribute"].as<std::string>();
+      if (s != "true" && s != "false") {
+        std::cerr << "Option 'filter_attribute' invalid; must be 'true' or 'false'. \n";
         wentgood = false;
       }
     }
