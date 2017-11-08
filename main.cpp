@@ -292,8 +292,8 @@ int main(int argc, const char * argv[]) {
       }
       //-- set filtering attribute
       bool filter_userdata = false;
-      if ((*it)["filter_attribute"]) {
-        if ((*it)["filter_attribute"].as<std::string>() == "true") {
+      if ((*it)["filter_userdata"]) {
+        if ((*it)["filter_userdata"].as<std::string>() == "true") {
           filter_userdata = true;
         }
       }
@@ -660,10 +660,10 @@ bool validate_yaml(const char* arg, std::set<std::string>& allowedFeatures) {
       }
     }
     //-- check filtering attribute
-    if ((*it)["filter_attribute"]) {
-      std::string s = (*it)["filter_attribute"].as<std::string>();
+    if ((*it)["filter_userdata"]) {
+      std::string s = (*it)["filter_userdata"].as<std::string>();
       if (s != "true" && s != "false") {
-        std::cerr << "Option 'filter_attribute' invalid; must be 'true' or 'false'. \n";
+        std::cerr << "Option 'filter_userdata' invalid; must be 'true' or 'false'. \n";
         wentgood = false;
       }
     }
