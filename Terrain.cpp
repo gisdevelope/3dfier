@@ -45,10 +45,10 @@ std::string Terrain::get_mtl() {
   return "usemtl Terrain";
 }
 
-bool Terrain::add_elevation_point(Point2 &p, double z, float radius, LAS14Class lasclass, bool lastreturn, bool addextra) {
+bool Terrain::add_elevation_point(Point2 &p, double z, float radius, LAS14Class lasclass, bool lastreturn, bool filteruserdata, bool addextra) {
   bool toadd = false;
   if (lastreturn && lasclass == LAS_GROUND) {
-    toadd = TIN::add_elevation_point(p, z, radius, lasclass, lastreturn, addextra);
+    toadd = TIN::add_elevation_point(p, z, radius, lasclass, lastreturn, filteruserdata, addextra);
   }
   return toadd;
 }

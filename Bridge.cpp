@@ -48,7 +48,7 @@ std::string Bridge::get_mtl() {
   return "usemtl Bridge";
 }
 
-bool Bridge::add_elevation_point(Point2 &p, double z, float radius, LAS14Class lasclass, bool lastreturn, bool addextra) {
+bool Bridge::add_elevation_point(Point2 &p, double z, float radius, LAS14Class lasclass, bool lastreturn, bool filteruserdata, bool addextra) {
   if (lastreturn == true && lasclass != LAS_BUILDING && lasclass != LAS_WATER) {
     if (point_in_polygon(p, *(_p2))) {
       int zcm = int(z * 100);

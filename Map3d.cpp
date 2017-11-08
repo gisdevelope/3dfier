@@ -588,14 +588,14 @@ void Map3d::add_elevation_point(liblas::Point const& laspt, bool filter_userdata
       radius = _radius_vertex_elevation;
     }
     bool addextra = false;
-    if (filter_userdata && laspt.GetUserData() == 1) {
+    if (laspt.GetUserData() == (uint8_t)1) {
       addextra = true;
     }
     f->add_elevation_point(p,
       laspt.GetZ(),
       radius,
       lasclass,
-      (laspt.GetReturnNumber() == laspt.GetNumberOfReturns()), addextra);
+      (laspt.GetReturnNumber() == laspt.GetNumberOfReturns()), filter_userdata, addextra);
   }
 }
 

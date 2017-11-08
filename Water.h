@@ -35,7 +35,7 @@ class Water: public Flat {
 public:
   Water(char *wkt, std::string layername, AttributeMap attributes, std::string pid, float heightref);
   bool          lift();
-  bool          add_elevation_point(Point2 &p, double z, float radius, LAS14Class lasclass, bool lastreturn, bool addextra);
+  bool          add_elevation_point(Point2 &p, double z, float radius, LAS14Class lasclass, bool lastreturn, bool filteruserdata, bool addextra);
   void          get_citygml(std::ostream& of);
   void          get_citygml_imgeo(std::ostream& of);
   std::string   get_mtl();
