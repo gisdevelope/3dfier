@@ -929,6 +929,7 @@ bool Map3d::add_las_file(PointFile pointFile) {
   catch (std::exception e) {
     std::cerr << "\tERROR: could not read file: " << pointFile.filename << std::endl;
     std::cerr << "\t" << e.what() << std::endl;
+    ifs.close();
     return false;
   }
 }
