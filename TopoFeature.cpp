@@ -1032,6 +1032,68 @@ bool TIN::add_elevation_point(Point2 &p, double z, float radius, LAS14Class lasc
 }
 
 bool TIN::buildCDT() {
-  getCDT(_p2, _p2z, _vertices, _triangles, _lidarpts, _simplification_tinsimp);
+  auto line_vec = getCDT(_p2, _p2z, _vertices, _triangles, _lidarpts, _simplification_tinsimp);
+  
+  if (line_vec.size() > 0)
+  {
+    const char *pszDriverName = "ESRI Shapefile";
+    GDALDriver *poDriver;
+    GDALAllRegister();
+    poDriver = GetGDALDriverManager()->GetDriverByName(pszDriverName );
+    if( poDriver == NULL )
+    {
+      printf( "%s driver not available.\n", pszDriverName );
+      exit( 1 );
+    }
+    GDALDataset *poDS;
+    std::string filename = get_id() + ".shp";
+    poDS = poDriver->Create( filename.c_str(), 0, 0, 0, GDT_Unknown, NULL );
+    if( poDS == NULL )
+    {
+      printf( "Creation of output file failed.\n" );
+      exit( 1 );
+    }
+    OGRLayer *poLayer;
+    poLayer = poDS->CreateLayer( "hoogtelijnen", NULL, wkbLineString, NULL );
+    if( poLayer == NULL )
+    {
+      printf( "Layer creation failed.\n" );
+      exit( 1 );
+    }
+    OGRFieldDefn oField_height( "height", OFTReal );
+    oField_height.SetPrecision(2);
+    if( poLayer->CreateField( &oField_height ) != OGRERR_NONE )
+    {
+      printf( "Creating height field failed.\n" );
+      exit( 1 );
+    }
+    OGRFieldDefn oField_angle( "angle", OFTReal );
+    oField_angle.SetPrecision(2);
+    if( poLayer->CreateField( &oField_angle ) != OGRERR_NONE )
+    {
+      printf( "Creating angle field failed.\n" );
+      exit( 1 );
+    }
+    
+    for(auto line : line_vec){
+      auto height = (line.p1.z() + line.p2.z())/2;
+      OGRFeature *poFeature;
+      poFeature = OGRFeature::CreateFeature( poLayer->GetLayerDefn() );
+      poFeature->SetField( "height", height );
+      poFeature->SetField( "angle", line.angle );
+      OGRLineString l;
+      l.addPoint(line.p1.x(), line.p1.y());
+      l.addPoint(line.p2.x(), line.p2.y());
+      poFeature->SetGeometry( &l );
+      if( poLayer->CreateFeature( poFeature ) != OGRERR_NONE )
+      {
+        printf( "Failed to create feature in shapefile.\n" );
+        exit( 1 );
+      }
+      OGRFeature::DestroyFeature( poFeature );
+    }
+    GDALClose( poDS );
+  }
+  //      std::cout << p1 << " " << p2 <<std::endl;
   return true;
 }
