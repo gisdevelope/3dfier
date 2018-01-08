@@ -1054,7 +1054,7 @@ bool TIN::buildCDT() {
       exit( 1 );
     }
     OGRLayer *poLayer;
-    poLayer = poDS->CreateLayer( "hoogtelijnen", NULL, wkbLineString, NULL );
+    poLayer = poDS->CreateLayer( "hoogtelijnen", NULL, wkbLineString25D, NULL );
     if( poLayer == NULL )
     {
       printf( "Layer creation failed.\n" );
@@ -1082,6 +1082,7 @@ bool TIN::buildCDT() {
       // poFeature->SetField( "height", height );
       poFeature->SetField( "angle", line.angle );
       OGRLineString l;
+      l.set3D(true);
       l.addPoint(line.p1.x(), line.p1.y(), line.p1.z());
       l.addPoint(line.p2.x(), line.p2.y(), line.p2.z());
       poFeature->SetGeometry( &l );
