@@ -1060,13 +1060,13 @@ bool TIN::buildCDT() {
       printf( "Layer creation failed.\n" );
       exit( 1 );
     }
-    OGRFieldDefn oField_height( "height", OFTReal );
-    oField_height.SetPrecision(2);
-    if( poLayer->CreateField( &oField_height ) != OGRERR_NONE )
-    {
-      printf( "Creating height field failed.\n" );
-      exit( 1 );
-    }
+    // OGRFieldDefn oField_height( "height", OFTReal );
+    // oField_height.SetPrecision(2);
+    // if( poLayer->CreateField( &oField_height ) != OGRERR_NONE )
+    // {
+    //   printf( "Creating height field failed.\n" );
+    //   exit( 1 );
+    // }
     OGRFieldDefn oField_angle( "angle", OFTReal );
     oField_angle.SetPrecision(2);
     if( poLayer->CreateField( &oField_angle ) != OGRERR_NONE )
@@ -1076,14 +1076,14 @@ bool TIN::buildCDT() {
     }
     
     for(auto line : line_vec){
-      auto height = (line.p1.z() + line.p2.z())/2;
+      // auto height = (line.p1.z() + line.p2.z())/2;
       OGRFeature *poFeature;
       poFeature = OGRFeature::CreateFeature( poLayer->GetLayerDefn() );
-      poFeature->SetField( "height", height );
+      // poFeature->SetField( "height", height );
       poFeature->SetField( "angle", line.angle );
       OGRLineString l;
-      l.addPoint(line.p1.x(), line.p1.y());
-      l.addPoint(line.p2.x(), line.p2.y());
+      l.addPoint(line.p1.x(), line.p1.y(), line.p1.z());
+      l.addPoint(line.p2.x(), line.p2.y(), line.p2.z());
       poFeature->SetGeometry( &l );
       if( poLayer->CreateFeature( poFeature ) != OGRERR_NONE )
       {
