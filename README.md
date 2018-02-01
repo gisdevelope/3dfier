@@ -81,6 +81,10 @@ Open a console. Using the console browse to the folder where you extracted the e
 
 There is also a [tutorial](https://github.com/tudelft3d/3dfier/wiki/General-3dfier-tutorial-to-generate-LOD1-models) on how to generate a 3D model with 3dfier.
 
+## Vagrant development environment
+
+If you are eager to contribute but do not want to fiddle with setting up the required libraries, Vagrant can take care of that. It creates a development environment in a virtual machine, which you can use to compile and run 3dfier. For details see VAGRANT.md
+
 ## Prepare BGT data
 For preparing BGT data as input for 3dfier look at [resources/BGT_prepare/ReadMe.md](https://github.com/tudelft3d/3dfier/blob/master/resources/BGT_prepare/ReadMe.md)
 
