@@ -176,32 +176,6 @@ bool getCDT(const Polygon2* pgn,
     poly.clear();
   }
 
-  //Ring2 oring = bg::exterior_ring(*pgn);
-  //auto irings = bg::interior_rings(*pgn);
-
-  //Polygon_2 poly;
-  //int ringi = 0;
-  ////-- add the outer ring as a constraint
-  //for (int i = 0; i < oring.size(); i++) {
-  //  poly.push_back(Point(bg::get<0>(oring[i]), bg::get<1>(oring[i]), z_to_float(z[ringi][i])));
-  //  //points.push_back(Point(bg::get<0>(oring[i]), bg::get<1>(oring[i])));
-  //}
-  //cdt.insert_constraint(poly.vertices_begin(), poly.vertices_end(), true);
-  //poly.clear();
-  //ringi++;
-
-  ////-- add the inner ring(s) as a constraint
-  //if (irings.size() > 0) {
-  //  for (auto iring : irings) {
-  //    for (int i = 0; i < iring.size(); i++) {
-  //      poly.push_back(Point(bg::get<0>(iring[i]), bg::get<1>(iring[i]), z_to_float(z[ringi][i])));
-  //    }
-  //    cdt.insert_constraint(poly.vertices_begin(), poly.vertices_end(), true);
-  //    poly.clear();
-  //    ringi++;
-  //  }
-  //}
-
   //-- add the lidar points to the CDT, if any
   if (lidarpts.size() > 0) {
       if (tinsimp_threshold != 0)
