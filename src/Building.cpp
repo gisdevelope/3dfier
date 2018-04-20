@@ -250,18 +250,14 @@ void Building::get_citygml(std::ostream& of) {
   get_polygon_lifted_gml(of, this->_p2, hbase, false);
   //-- get roof
   get_polygon_lifted_gml(of, this->_p2, h, true);
-  //-- get the walls
-  auto r = bg::exterior_ring(*(this->_p2));
-  int i;
-  for (i = 0; i < (r.size() - 1); i++)
-    get_extruded_line_gml(of, &r[i], &r[i + 1], h, hbase, false);
-  get_extruded_line_gml(of, &r[i], &r[0], h, hbase, false);
-  //-- irings
-  auto irings = bg::interior_rings(*(this->_p2));
-  for (Ring2& r : irings) {
-    for (i = 0; i < (r.size() - 1); i++)
-      get_extruded_line_gml(of, &r[i], &r[i + 1], h, hbase, false);
-    get_extruded_line_gml(of, &r[i], &r[0], h, hbase, false);
+  //-- get the walls      
+  std::vector<Ring2>* rings = get_rings(_p2);
+  for (auto& ring : *rings) {
+    int i;
+    for (i = 0; i < (ring.size() - 1); i++) {
+      get_extruded_line_gml(of, &ring[i], &ring[i + 1], h, hbase, false);
+    }
+    get_extruded_line_gml(of, &ring[i], &ring[0], h, hbase, false);
   }
   of << "</gml:CompositeSurface>";
   of << "</gml:exterior>";
@@ -290,17 +286,13 @@ void Building::get_citygml_imgeo(std::ostream& of) {
   //-- get roof
   get_polygon_lifted_gml(of, this->_p2, h, true);
   //-- get the walls
-  auto r = bg::exterior_ring(*(this->_p2));
-  int i;
-  for (i = 0; i < (r.size() - 1); i++)
-    get_extruded_line_gml(of, &r[i], &r[i + 1], h, hbase, false);
-  get_extruded_line_gml(of, &r[i], &r[0], h, hbase, false);
-  //-- irings
-  auto irings = bg::interior_rings(*(this->_p2));
-  for (Ring2& r : irings) {
-    for (i = 0; i < (r.size() - 1); i++)
-      get_extruded_line_gml(of, &r[i], &r[i + 1], h, hbase, false);
-    get_extruded_line_gml(of, &r[i], &r[0], h, hbase, false);
+  std::vector<Ring2>* rings = get_rings(_p2);
+  for (auto& ring : *rings) {
+    int i;
+    for (i = 0; i < (ring.size() - 1); i++) {
+      get_extruded_line_gml(of, &ring[i], &ring[i + 1], h, hbase, false);
+    }
+    get_extruded_line_gml(of, &ring[i], &ring[0], h, hbase, false);
   }
   of << "</gml:CompositeSurface>";
   of << "</gml:exterior>";

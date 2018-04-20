@@ -103,6 +103,7 @@ public:
   void set_requested_extent(double xmin, double ymin, double xmax, double ymax);
 
   void add_allowed_las_class(AllowedLASTopo c, int i);
+  int interpolate_height(TopoFeature* f, const Point2 &p, int prevringi, int prevpi, int nextringi, int nextpi);
   bool save_building_variables();
 
 private:
