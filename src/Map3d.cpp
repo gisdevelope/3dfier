@@ -1043,9 +1043,9 @@ void Map3d::stitch_lifted_features() {
       //-- 1. store all touching top level (adjacent + incident)
       std::vector<TopoFeature*>* lstouching = f->get_adjacent_features();
       //-- 2. build the node-column for each vertex
-      std::vector<Ring2>* rings = get_rings(f->get_Polygon2());
+      std::vector<Ring2> rings = get_rings(f->get_Polygon2());
       int ringi = -1;
-      for (auto& ring : *rings) {
+      for (auto& ring : rings) {
         ringi++;
         for (int i = 0; i < ring.size(); i++) {
           std::vector< std::tuple<TopoFeature*, int, int> > star;
@@ -1348,9 +1348,9 @@ void Map3d::stitch_bridges() {
       std::vector<TopoFeature*>* lstouching = f->get_adjacent_features();
 
       //-- collect the rings of the polygon
-      std::vector<Ring2>* rings = get_rings(f->get_Polygon2());
+      std::vector<Ring2> rings = get_rings(f->get_Polygon2());
       int ringi = -1;
-      for (auto& ring : *rings) {
+      for (auto& ring : rings) {
         ringi++;
         std::vector< std::pair<int, bool> > corners;
         for (int i = 0; i < ring.size(); i++) {

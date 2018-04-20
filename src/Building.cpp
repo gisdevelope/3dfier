@@ -251,8 +251,8 @@ void Building::get_citygml(std::ostream& of) {
   //-- get roof
   get_polygon_lifted_gml(of, this->_p2, h, true);
   //-- get the walls      
-  std::vector<Ring2>* rings = get_rings(_p2);
-  for (auto& ring : *rings) {
+  std::vector<Ring2> rings = get_rings(_p2);
+  for (auto& ring : rings) {
     int i;
     for (i = 0; i < (ring.size() - 1); i++) {
       get_extruded_line_gml(of, &ring[i], &ring[i + 1], h, hbase, false);
@@ -286,8 +286,8 @@ void Building::get_citygml_imgeo(std::ostream& of) {
   //-- get roof
   get_polygon_lifted_gml(of, this->_p2, h, true);
   //-- get the walls
-  std::vector<Ring2>* rings = get_rings(_p2);
-  for (auto& ring : *rings) {
+  std::vector<Ring2> rings = get_rings(_p2);
+  for (auto& ring : rings) {
     int i;
     for (i = 0; i < (ring.size() - 1); i++) {
       get_extruded_line_gml(of, &ring[i], &ring[i + 1], h, hbase, false);

@@ -374,14 +374,14 @@ bool TopoFeature::get_multipolygon_features(OGRLayer* layer, std::string classNa
 
 void TopoFeature::fix_bowtie() {
   //-- gather all rings
-  std::vector<Ring2>* rings = get_rings(_p2);
+  std::vector<Ring2> rings = get_rings(_p2);
 
   //-- process each vertex of the polygon separately
   std::vector<int> anc, bnc;
   Point2 a, b;
   TopoFeature* fadj;
   int ringi = -1;
-  for (auto& ring : *rings) {
+  for (auto& ring : rings) {
     ringi++;
     for (int ai = 0; ai < ring.size(); ai++) {
       //-- Point a
@@ -470,7 +470,7 @@ void TopoFeature::construct_vertical_walls(NodeColumn& nc, int baseheight) {
     return;
 
   //-- gather all rings
-  std::vector<Ring2>* rings = get_rings(_p2);
+  std::vector<Ring2> rings = get_rings(_p2);
 
   //-- process each vertex of the polygon separately
   std::vector<int> anc, bnc;
@@ -478,7 +478,7 @@ void TopoFeature::construct_vertical_walls(NodeColumn& nc, int baseheight) {
   Point2 a, b;
   TopoFeature* fadj;
   int ringi = -1;
-  for (auto& ring : *rings) {
+  for (auto& ring : rings) {
     ringi++;
     for (int ai = 0; ai < ring.size(); ai++) {
       //-- Point a
@@ -683,12 +683,12 @@ bool TopoFeature::has_segment(Point2& a, Point2& b, int& aringi, int& api, int& 
 
 float TopoFeature::get_distance_to_boundaries(Point2& p) {
   //-- gather all rings
-  std::vector<Ring2>* rings = get_rings(_p2);
+  std::vector<Ring2> rings = get_rings(_p2);
   Point2 a, b;
   Segment2 s;
   int ringi = -1;
   double dmin = 99999;
-  for (auto& ring : *rings) {
+  for (auto& ring : rings) {
     ringi++;
     for (int ai = 0; ai < ring.size(); ai++) {
       a = ring[ai];
@@ -713,9 +713,9 @@ bool TopoFeature::has_point2_(const Point2& p, std::vector<int>& ringis, std::ve
   double threshold = 0.001;
 
   //-- gather all rings
-  std::vector<Ring2>* rings = get_rings(_p2);
+  std::vector<Ring2> rings = get_rings(_p2);
   int ringi = -1;
-  for (auto& ring : *rings) {
+  for (auto& ring : rings) {
     ringi++;
     for (int i = 0; i < ring.size(); i++) {
       if (distance(p, ring[i]) <= threshold) {
@@ -781,9 +781,9 @@ void TopoFeature::set_vertex_elevation(int ringi, int pi, int z) {
 bool TopoFeature::assign_elevation_to_vertex(Point2 &p, double z, float radius) {
   int zcm = int(z * 100);
   //-- collect the rings of the polygon
-  std::vector<Ring2>* rings = get_rings(_p2);
+  std::vector<Ring2> rings = get_rings(_p2);
   int ringi = -1;
-  for (auto& ring : *rings) {
+  for (auto& ring : rings) {
     ringi++;
     for (int i = 0; i < ring.size(); i++) {
       if (distance(p, ring[i]) <= radius)
@@ -795,9 +795,9 @@ bool TopoFeature::assign_elevation_to_vertex(Point2 &p, double z, float radius) 
 
 bool TopoFeature::within_range(Point2 &p, Polygon2 &poly, double radius) {
   //-- collect the rings of the polygon
-  std::vector<Ring2>* rings = get_rings(_p2);
+  std::vector<Ring2> rings = get_rings(_p2);
   int ringi = -1;
-  for (auto& ring : *rings) {
+  for (auto& ring : rings) {
     ringi++;
     //--  point is within range of the polygon rings
     for (int i = 0; i < ring.size(); i++) {
@@ -912,9 +912,9 @@ bool TopoFeature::get_attribute(std::string attributeName, std::string &attribut
 
 void TopoFeature::lift_all_boundary_vertices_same_height(int height) {
   //-- collect the rings of the polygon
-  std::vector<Ring2>* rings = get_rings(_p2);
+  std::vector<Ring2> rings = get_rings(_p2);
   int ringi = -1;
-  for (auto& ring : *rings) {
+  for (auto& ring : rings) {
     ringi++;
     for (int i = 0; i < ring.size(); i++)
       _p2z[ringi][i] = height;
@@ -932,9 +932,9 @@ std::vector<TopoFeature*>* TopoFeature::get_adjacent_features() {
 void TopoFeature::lift_each_boundary_vertices(float percentile) {
   //-- 1. assign value for each vertex based on percentile
   //-- collect the rings of the polygon
-  std::vector<Ring2>* rings = get_rings(_p2);
+  std::vector<Ring2> rings = get_rings(_p2);
   int ringi = -1;
-  for (auto& ring : *rings) {
+  for (auto& ring : rings) {
     ringi++;
     for (int i = 0; i < ring.size(); i++) {
       std::vector<int> &l = _lidarelevs[ringi][i];
@@ -952,7 +952,7 @@ void TopoFeature::lift_each_boundary_vertices(float percentile) {
   int totalheight = 0;
   int heightcount = 0;
   ringi = -1;
-  for (auto& ring : *rings) {
+  for (auto& ring : rings) {
     ringi++;
     for (int i = 0; i < ring.size(); i++) {
       if (_p2z[ringi][i] != -9999) {
@@ -970,7 +970,7 @@ void TopoFeature::lift_each_boundary_vertices(float percentile) {
   //-- 3. some vertices will have no values (no lidar point within tolerance thus)
   //--    assign them the avg
   ringi = 0;
-  for (auto& ring : *rings) {
+  for (auto& ring : rings) {
     for (int i = 0; i < ring.size(); i++) {
       if (_p2z[ringi][i] == -9999)
         _p2z[ringi][i] = avgheight;
@@ -1048,9 +1048,9 @@ void Boundary3D::smooth_boundary(int passes) {
 
 void Boundary3D::detect_outliers(int degrees_incline) {
   //-- collect the rings of the polygon
-  std::vector<Ring2>* rings = get_rings(_p2);
+  std::vector<Ring2> rings = get_rings(_p2);
   int ringi = -1;
-  for (auto& ring : *rings) {
+  for (auto& ring : rings) {
     ringi++;
     std::vector<int> ringz = _p2z[ringi];
     float PI = 3.14159265;
