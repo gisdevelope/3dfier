@@ -243,8 +243,8 @@ double distance(const Point2 &p1, const Point2 &p2) {
 std::vector<Ring2>* get_rings(const Polygon2* p) {
   //-- collect the rings of the polygon
   std::vector<Ring2> rings;
-  rings.push_back(bg::exterior_ring(p));
-  for (auto& iring : bg::interior_rings(p)) {
+  rings.push_back(bg::exterior_ring(*p));
+  for (auto& iring : bg::interior_rings(*p)) {
     rings.push_back(iring);
   }
   return &rings;
