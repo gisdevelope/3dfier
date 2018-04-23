@@ -715,17 +715,19 @@ bool TopoFeature::has_point2_(const Point2& p, std::vector<int>& ringis, std::ve
   //-- gather all rings
   std::vector<Ring2> rings = get_rings(_p2);
   int ringi = -1;
+  bool re = false;
   for (auto& ring : rings) {
     ringi++;
     for (int i = 0; i < ring.size(); i++) {
       if (distance(p, ring[i]) <= threshold) {
         ringis.push_back(ringi);
         pis.push_back(i);
-        return true;
+        re = true;
+        break;
       }
     }
   }
-  return false;
+  return re;
 }
 
 Point2 TopoFeature::get_point2(int ringi, int pi) {
@@ -787,7 +789,7 @@ bool TopoFeature::assign_elevation_to_vertex(Point2 &p, double z, float radius) 
     ringi++;
     for (int i = 0; i < ring.size(); i++) {
       if (distance(p, ring[i]) <= radius)
-        (_lidarelevs[ringi][i]).push_back(zcm);
+        _lidarelevs[ringi][i].push_back(zcm);
     }
   }
   return true;
@@ -932,50 +934,50 @@ std::vector<TopoFeature*>* TopoFeature::get_adjacent_features() {
 void TopoFeature::lift_each_boundary_vertices(float percentile) {
   //-- 1. assign value for each vertex based on percentile
   //-- collect the rings of the polygon
+  bool hasEmpty = false;
+  int totalheight = 0;
+  int heightcount = 0;
   std::vector<Ring2> rings = get_rings(_p2);
   int ringi = -1;
   for (auto& ring : rings) {
     ringi++;
     for (int i = 0; i < ring.size(); i++) {
       std::vector<int> &l = _lidarelevs[ringi][i];
-      if (l.empty() == true)
+      if (l.empty() == true) {
         _p2z[ringi][i] = -9999;
+        hasEmpty = true;
+      }
       else {
         std::nth_element(l.begin(), l.begin() + (l.size() * percentile), l.end());
         _p2z[ringi][i] = l[l.size() * percentile];
-      }
-    }
-  }
-
-  //TODO: Check if step 2 and 3 are still needed
-  //-- 2. find average height of the polygon
-  int totalheight = 0;
-  int heightcount = 0;
-  ringi = -1;
-  for (auto& ring : rings) {
-    ringi++;
-    for (int i = 0; i < ring.size(); i++) {
-      if (_p2z[ringi][i] != -9999) {
         totalheight += _p2z[ringi][i];
         heightcount++;
       }
     }
   }
-  int avgheight;
-  if (heightcount > 0)
-    avgheight = int(totalheight / heightcount);
-  else
-    avgheight = 0;
 
-  //-- 3. some vertices will have no values (no lidar point within tolerance thus)
-  //--    assign them the avg
-  ringi = 0;
-  for (auto& ring : rings) {
-    for (int i = 0; i < ring.size(); i++) {
-      if (_p2z[ringi][i] == -9999)
-        _p2z[ringi][i] = avgheight;
+  //-- 2. find average height of the polygon
+  int avgheight;
+  if (heightcount > 0) {
+    avgheight = int(totalheight / heightcount);
+  }
+  else {
+    avgheight = -9999;
+    hasEmpty = false; // no need since all heights are -9999
+    std::cout << "WARNING: Object " << _id << " doesn't have any heights." << std::endl;
+  }
+
+  if (hasEmpty) {
+    //-- 3. some vertices will have no values (no lidar point within tolerance thus)
+    //--    assign them the avg
+    ringi = -1;
+    for (auto& ring : rings) {
+      ringi++;
+      for (int i = 0; i < ring.size(); i++) {
+        if (_p2z[ringi][i] == -9999)
+          _p2z[ringi][i] = avgheight;
+      }
     }
-    ringi++;
   }
 }
 

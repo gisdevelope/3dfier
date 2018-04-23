@@ -1063,9 +1063,9 @@ void Map3d::stitch_lifted_features() {
           }
           else if (f->get_class() == BUILDING) {
             f->add_vertical_wall();
-            Point2 tmp = f->get_point2(0, i);
+            Point2 tmp = f->get_point2(ringi, i);
             std::string key_bucket = gen_key_bucket(&tmp);
-            int z = f->get_vertex_elevation(0, i);
+            int z = f->get_vertex_elevation(ringi, i);
             _nc[key_bucket].push_back(z);
             z = dynamic_cast<Building*>(f)->get_height_base();
             _nc[key_bucket].push_back(z);
