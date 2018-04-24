@@ -1006,7 +1006,7 @@ int Flat::get_height() {
 }
 
 bool Flat::lift_percentile(float percentile) {
-  int z = 0;
+  int z = -9999;
   if (_zvaluesinside.empty() == false) {
     std::nth_element(_zvaluesinside.begin(), _zvaluesinside.begin() + (_zvaluesinside.size() * percentile), _zvaluesinside.end());
     z = _zvaluesinside[_zvaluesinside.size() * percentile];
