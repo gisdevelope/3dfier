@@ -964,7 +964,7 @@ void TopoFeature::lift_each_boundary_vertices(float percentile) {
   else {
     avgheight = -9999;
     hasEmpty = false; // no need since all heights are -9999
-    std::cout << "WARNING: Object " << _id << " doesn't have any heights." << std::endl;
+    //std::cout << "WARNING: Object " << _id << " doesn't have any heights." << std::endl;
   }
 
   if (hasEmpty) {

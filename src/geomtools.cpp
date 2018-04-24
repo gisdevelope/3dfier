@@ -244,9 +244,8 @@ std::vector<Ring2> get_rings(const Polygon2* poly) {
   //-- collect the rings of the polygon
   std::vector<Ring2> rings;
   rings.push_back(bg::exterior_ring(*poly));
-  for (auto& iring : bg::interior_rings(*poly)) {
-    rings.push_back(iring);
-  }
+  const std::vector<Ring2> irings = poly->inners();
+  rings.insert(rings.end(), irings.begin(), irings.end());
   return rings;
 }
 
